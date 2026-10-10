@@ -432,7 +432,9 @@ int main(int argc,char** argv) {
               "  \"device_type\": "<<quote(software?"software_cpu":
                     vk.props.deviceType==VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU?"discrete_gpu":
                     vk.props.deviceType==VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU?"integrated_gpu":"other")<<",\n"
-              "  \"hardware_score_eligible\": "<<(software?"false":"true")<<",\n"
+              "  \"hardware_score_eligible\": false,\n"
+              "  \"physical_compute_device_detected\": "<<(realgpu?"true":"false")<<",\n"
+              "  \"measured_warmup_dispatches\": 12,\n"
               "  \"vrs_extension_advertised\": "<<(vk.has_vrs_extension?"true":"false")<<",\n"
               "  \"vrs_pipeline_feature\": "<<(vk.vrs_pipeline?"true":"false")<<",\n"
               "  \"vrs_attachment_feature\": "<<(vk.vrs_attachment?"true":"false")<<",\n"
