@@ -1,0 +1,126 @@
+{
+  "registry_version": "1.0",
+  "as_of": "2026-10-10",
+  "warning": "Published URLs are not locally downloaded data or confirmed redistribution rights.",
+  "datasets": [
+    {
+      "id": "fb-synthetic-gaze",
+      "kind": "procedural gaze",
+      "availability": "generated_in_repo",
+      "role": "pipeline diagnostic; not human data",
+      "url": "https://github.com/swayam8624/Foveabench"
+    },
+    {
+      "id": "fb-synthetic-scenes",
+      "kind": "procedural RGB patterns",
+      "availability": "generated_in_repo",
+      "role": "render functional diagnostic",
+      "url": "https://github.com/swayam8624/Foveabench"
+    },
+    {
+      "id": "GazeBaseVR",
+      "kind": "binocular 250Hz VR eye gaze",
+      "availability": "catalogued_not_downloaded",
+      "role": "VR gaze training/testing by person",
+      "url": "https://figshare.com/articles/dataset/GazeBaseVR_Data_Repository/21308391"
+    },
+    {
+      "id": "GazeBase",
+      "kind": "monocular 1000Hz gaze",
+      "availability": "catalogued_not_downloaded",
+      "role": "cross-device external testing",
+      "url": "https://figshare.com/articles/dataset/GazeBase_Data_Repository/12912257"
+    },
+    {
+      "id": "EyeNavGS",
+      "kind": "head pose and gaze in VR 3DGS scenes",
+      "availability": "catalogued_not_downloaded",
+      "role": "live/replay scene-conditioned research",
+      "url": "https://symmru.github.io/EyeNavGS/"
+    },
+    {
+      "id": "EVE",
+      "kind": "eye-video/POG",
+      "availability": "catalogued_not_downloaded",
+      "role": "appearance-based gaze train/validation/test",
+      "url": "https://github.com/swook/EVE/blob/master/DATASET.md"
+    },
+    {
+      "id": "MPIIGaze",
+      "kind": "213659 appearance gaze images",
+      "availability": "catalogued_not_downloaded",
+      "role": "noncommercial gaze learning",
+      "url": "https://www.collaborative-ai.org/research/datasets/MPIIGaze/"
+    },
+    {
+      "id": "Gaze360",
+      "kind": "197588 unconstrained 3D gaze frames",
+      "availability": "catalogued_not_downloaded",
+      "role": "out-of-distribution gaze testing",
+      "url": "https://github.com/erkil1452/gaze360/blob/master/dataset/README.md"
+    },
+    {
+      "id": "ETH-XGaze",
+      "kind": "multi-view gaze under pose variation",
+      "availability": "registration_required",
+      "role": "gaze training/test; institutional signup",
+      "url": "https://xgaze.ait.ethz.ch/"
+    },
+    {
+      "id": "RT-GENE/RT-BENE",
+      "kind": "gaze and blink annotations",
+      "availability": "catalogued_not_downloaded",
+      "role": "video gaze/blink modeling",
+      "url": "https://github.com/Tobias-Fischer/rt_gene"
+    },
+    {
+      "id": "EV-Eye",
+      "kind": "near-eye event camera gaze",
+      "availability": "catalogued_not_downloaded",
+      "role": "event-based eye tracking",
+      "url": "https://github.com/Ningreka/EV-Eye"
+    },
+    {
+      "id": "TUM VI",
+      "kind": "stereo camera IMU pose",
+      "availability": "catalogued_not_downloaded",
+      "role": "VIO; NOT eye gaze",
+      "url": "https://cvg.cit.tum.de/data/datasets/visual-inertial-dataset"
+    },
+    {
+      "id": "TUM-VIE",
+      "kind": "stereo event camera/IMU pose",
+      "availability": "catalogued_not_downloaded",
+      "role": "high-motion VIO; NOT eye gaze",
+      "url": "https://cvg.cit.tum.de/data/datasets/visual-inertial-event-dataset"
+    },
+    {
+      "id": "EuRoC MAV",
+      "kind": "stereo camera/IMU trajectory",
+      "availability": "catalogued_not_downloaded",
+      "role": "OpenVINS; NOT eye gaze",
+      "url": "https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets"
+    },
+    {
+      "id": "ARKitScenes",
+      "kind": "RGB-D and meshes",
+      "availability": "catalogued_not_downloaded",
+      "role": "licensed indoor scene reconstruction",
+      "url": "https://github.com/apple/ARKitScenes/blob/main/DATA.md"
+    },
+    {
+      "id": "Tanks and Temples",
+      "kind": "real 3D reconstruction scenes",
+      "availability": "catalogued_not_downloaded",
+      "role": "geometry stress workloads",
+      "url": "https://tanksandtemples.org/download/"
+    },
+    {
+      "id": "Khronos glTF Sample Assets",
+      "kind": "glTF/GLB graphics test scenes",
+      "availability": "catalogued_not_downloaded",
+      "role": "per-model licensed render testing",
+      "url": "https://github.com/KhronosGroup/glTF-Sample-Assets"
+    }
+  ]
+}
