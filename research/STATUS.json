@@ -1,0 +1,33 @@
+{
+  "schema": "FB-RESEARCH-STATUS/1.0",
+  "date_utc": "2026-10-10",
+  "audited_baseline_main_commit": "ba1d50bdb9de35e123e348804edae66776dd7bfc",
+  "notice": "Implementation and user-observed synthetic results do not establish scientific XR validity. Historical docs/STATUS.md was written before UTM execution.",
+  "capabilities": {
+    "synthetic_gaze_study": "user_utm_pass",
+    "phase1_2_3_concurrent_campaign": "user_utm_pass",
+    "native_vulkan_software_compute": "user_utm_pass_llvmpipe",
+    "supervised_neural_training": "user_utm_pass_model_not_better_overall",
+    "learned_prediction_vulkan_bridge": "user_utm_pass_16848_dispatches",
+    "frozen_checkpoint_new_synthetic_ids": "user_utm_pass_no_human_validity",
+    "native_visual_capture": "github_ci_amd64_arm64_pass_user_viewer_run_pending",
+    "third_party_real_gaze_ingested": "not_run",
+    "human_quality_measurements": "not_run",
+    "published_paper_reproduced": "not_run",
+    "native_physical_gpu_vrs": "not_implemented",
+    "illixr_direct_integration": "not_implemented",
+    "rl_training": "not_implemented",
+    "novelty_established": "none"
+  },
+  "dataset_register": {
+    "procedural_generated_entries": 2,
+    "external_catalogued_not_downloaded_entries": 20
+  },
+  "reference_files": [
+    "research/CLAIMS.md",
+    "research/RESULTS.md",
+    "research/DEVELOPMENT_LOG.md",
+    "research/CODE_AND_TEST_MAP.md",
+    "research/TRACEABILITY.md"
+  ]
+}

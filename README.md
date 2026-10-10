@@ -1,3 +1,24 @@
+## Auditable research record and development notebook
+
+**Start at [`research/README.md`](research/README.md).** The permanent research
+record includes a hypothesis/novelty register, all currently supported
+functional findings and negative results, code-to-test inventory, complete
+dated development/commit log, published-paper reproduction status, experiment
+integrity policy, traceability matrix and future scientific acceptance gates.
+
+Generate a SHA-256 source/symbol map or hash a local benchmark run without
+committing any raw user/participant data:
+
+```bash
+python scripts/research_archive.py inventory --repo . --output results/source-index-001
+python scripts/research_archive.py archive --repo . --run-dir results/YOUR-RUN --output results/evidence-001 --description 'UTM synthetic software-Vulkan evidence'
+python scripts/research_archive.py verify --manifest results/evidence-001/evidence_manifest.json
+```
+
+CI checks record integrity and uploads a complete versioned code index.
+**Science limitation:** no real humans, native hardware VRS, actual ILLIXR
+integration or published-paper score reproduction has been demonstrated.
+
 # FoveaBench
 
 **Version 0.1: reproducible gaze replay and a CPU image-space foveation reference model.** This is an independent research harness for the Virginia Tech / XR research direction. It is **not** an ILLIXR starter-task solution, a physical XR runtime, an FPGA testbench, or a measured Vulkan/GPU benchmark.

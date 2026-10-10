@@ -1,0 +1,53 @@
+name: FoveaBench research record integrity
+on:
+  push:
+  pull_request:
+jobs:
+  scientific-documentation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record and code-index integrity unit tests
+        run: python3 -m unittest discover -s tests -p test_research_archive.py -v
+      - name: Validate evidence register and claims taxonomy
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, re
+          base=pathlib.Path('research')
+          require=['README.md','CLAIMS.md','CODE_AND_TEST_MAP.md','RESULTS.md','DEVELOPMENT_LOG.md','REPRODUCIBILITY.md','RESEARCH_QUESTIONS.md','PAPER_AND_HUMAN_VALIDATION.md','ROADMAP.md','TRACEABILITY.md','RESEARCH_POLICY.md','STATUS.json']
+          for name in require:assert (base/name).is_file(), f'Missing {name}'
+          claims=(base/'CLAIMS.md').read_text()
+          findings=(base/'RESULTS.md').read_text()
+          trace=(base/'TRACEABILITY.md').read_text()
+          for number in range(1,9):
+              cid=f'N-{number:03d}'
+              assert cid in claims and cid in trace, f'Novelty not traced: {cid}'
+          for number in range(1,18):
+              fid=f'F-{number:03d}'
+              assert fid in findings, f'Finding missing: {fid}'
+          status=json.loads((base/'STATUS.json').read_text())
+          assert status['schema']=='FB-RESEARCH-STATUS/1.0'
+          assert status['capabilities']['rl_training']=='not_implemented'
+          assert status['capabilities']['native_physical_gpu_vrs']=='not_implemented'
+          assert status['capabilities']['novelty_established']=='none'
+          print('RESEARCH_RECORD_PASS 8 novelty candidates; 17 finding entries; limitations preserved')
+          PY
+      - name: Generate versioned index of all tracked code and tests
+        run: |
+          python3 scripts/research_archive.py inventory --repo . --output results/research-ci-inventory
+          python3 - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('results/research-ci-inventory/code_inventory.json')
+          x=json.loads(p.read_text())
+          assert x['tracked_files_indexed'] >= 60
+          assert x['declared_python_test_methods']>=20
+          assert any(r['path']=='native/vulkan_compute/main.cpp' for r in x['files'])
+          assert any(r['path']=='research/CLAIMS.md' for r in x['files'])
+          print('CODE_SOURCE_INDEX_PASS', x['tracked_files_indexed'],x['declared_python_test_methods'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: foveabench-code-research-inventory
+          path: results/research-ci-inventory/
