@@ -77,6 +77,7 @@ std::vector<Gaze> read_trace(const fs::path& path, int max_frames) {
     std::ifstream in(path);
     if (!in) throw std::runtime_error("Cannot open trace " + path.string());
     std::string line; std::getline(in,line);
+    if (!line.empty() && line.back() == '\r') line.pop_back(); // Python csv.writer uses CRLF by default.
     if (line != "timestamp_ns,truth_x,truth_y,used_x,used_y,valid")
         throw std::runtime_error("Trace header must be timestamp_ns,truth_x,truth_y,used_x,used_y,valid");
     std::vector<Gaze> out;
