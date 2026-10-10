@@ -48,5 +48,5 @@ Next: execute smoke under CI and locally, audit artifacts, run ARM64 Ubuntu on U
 - **FB-CAMPAIGN-01**: IMPLEMENTED and validated on hosted Ubuntu; train/validation/test split by identity, with full-information offline predictor selection using *train* labels only and paired identity-level bootstraps on heldout comparisons.
 - **57,600 synthetic prediction outcomes**, 12 **synthetic identities** and 10 conditions analyzed in hosted CI. These 12 IDs are *not 12 participants*.
 - **ARM64 three-track execution**: PASSED. Phase 1/2 launched concurrently; Phase 3 consumed Phase 1 evidence after it completed. Workflow: https://github.com/swayam8624/Foveabench/actions/runs/38049717202
-- **17 dataset catalog entries**: 2 generated procedural sources, 15 external sources **not downloaded** or gated. Registry does not assert redistribution rights.
+- **22 dataset catalog entries**: 2 generated procedural sources, 20 external sources **not downloaded** or gated. Registry does not assert redistribution rights.
 - **Actual RL optimization**, empirical gaze measurements, real GPU VRS, live ILLIXR integration, headset power, perceptual subjects: NOT IMPLEMENTED/NOT VALIDATED.
