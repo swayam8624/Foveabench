@@ -17,7 +17,7 @@ cat results/phase3-first/report.md
 bash scripts/run_three_tracks.sh
 ```
 
-See [Phase 3 methods](docs/PHASE3_CAMPAIGNS.md), [17-item dataset inventory](benchmark_spec/datasets/registry.json) and [GitHub CI](https://github.com/swayam8624/Foveabench/actions). Catalogued external datasets are **not downloaded** and their license/access requirements still apply. Simulated context-specific choices are not directly deployable online controllers; no claimed XR perceptual or hardware score.
+See [Phase 3 methods](docs/PHASE3_CAMPAIGNS.md), [22-item dataset inventory](benchmark_spec/datasets/registry.json) and [GitHub CI](https://github.com/swayam8624/Foveabench/actions). Catalogued external datasets are **not downloaded** and their license/access requirements still apply. Simulated context-specific choices are not directly deployable online controllers; no claimed XR perceptual or hardware score.
 
 ## Phase 2: FB-RENDER-01 — native Vulkan and concurrent execution (October 10, 2026)
 
