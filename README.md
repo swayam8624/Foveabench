@@ -24,6 +24,12 @@ These are exploratory synthetic test-set analyses, **not fresh sealed validation
     python -m foveabench.learn_bridge prepare --ml-output results/ml-utm-20261010T153731Z --output results/learned-render-001
     python -m foveabench.learn_bridge render --prepared results/learned-render-001
     cat results/learned-render-001/report.md
+## Frozen neural controller: new synthetic agent evaluation
+
+Diagnose the first learned controller's velocity weights and evaluate its
+frozen checkpoint on **newly generated pseudonymous IDs** and a new seed.
+See [FB-LEARN-TRANSFER guide](docs/ML_TRANSFER_VALIDATION.md).
+This is limited within-generator robustness, not new human data.
 ## Phase 3: FB-CAMPAIGN-01 — disjoint experimental campaigns (October 2026)
 
 **Verified in Ubuntu and Ubuntu ARM64 GitHub Actions:** an unattended Phase 1 study generates 57,600 gaze-model records; Phase 3 compares predictor choices with identity-disjoint train/validation/test sets, paired held-out cluster bootstrap intervals, loss/availability accounting and SHA-256 input provenance. It is a **full-information offline policy selector, NOT reinforcement learning**. Only synthetic agents have been tested; empirical/human validity is unproven. 
