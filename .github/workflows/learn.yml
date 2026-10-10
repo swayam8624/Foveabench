@@ -47,6 +47,19 @@ jobs:
           python -m foveabench.learn_bridge render --prepared results/learn-render-ci
           test -f results/learn-render-ci/comparison.csv
           cat results/learn-render-ci/report.md
+      - name: Check transfer evaluator contracts
+        run: python -m unittest discover -s tests -p test_learn_transfer.py -v
+      - name: Generate unseen synthetic identities for frozen-model transfer
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=json.loads(pathlib.Path('benchmark_spec/profiles/fb-gaze-01.json').read_text())
+          p['synthetic_sessions_per_kind']=5
+          pathlib.Path('results/transfer-profile.json').write_text(json.dumps(p))
+          PY
+          python -m foveabench.phase1 run --config results/transfer-profile.json --output results/transfer-input --seed 20261023
+          python -m foveabench.learn_transfer evaluate --ml-output results/learn-ci --phase1-frames results/transfer-input/frames.csv --output results/transfer-ci
+          cat results/transfer-ci/report.md
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -54,3 +67,4 @@ jobs:
           path: |
             results/learn-ci/
             results/learn-render-ci/
+            results/transfer-ci/
