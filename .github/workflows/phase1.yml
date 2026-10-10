@@ -1,0 +1,42 @@
+name: FB-GAZE-01 autonomous study
+on:
+  push:
+  pull_request:
+jobs:
+  gaze-study:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Phase 1 integrity checks
+        run: python -m unittest discover -s tests -p test_phase1.py -v
+      - name: Execute 57600-prediction sensor study
+        run: python -m foveabench.phase1 run --output results/phase1-ci --seed 20261010
+      - name: Validate evidence and expected quality-gate behavior
+        run: |
+          python - <<'PY'
+          import json, csv
+          from pathlib import Path
+          d = Path('results/phase1-ci')
+          m = json.loads((d/'manifest.json').read_text())
+          assert m['spec_version'] == 'FB-GAZE-01/1.0'
+          assert m['frames'] == 57600
+          assert m['traces'] == 12
+          assert all(v != 'FAIL' for v in m['checks'].values())
+          with (d/'summary.csv').open() as f: rows=list(csv.DictReader(f))
+          assert len(rows)==20
+          assert any(r['meets_quality_gate']=='False' for r in rows)
+          assert any(r['meets_quality_gate']=='True' for r in rows)
+          assert all((d/x).exists() for x in ('report.md','paired.csv','frames.csv','STATUS.md'))
+          print('VALIDATED:',m['frames'],'frame-model evaluations,',len(rows),'summary rows')
+          for r in rows:
+            if r['condition'] in ('clean','latency-60','noise-2'):
+              print(r['condition'],r['predictor'],'P95_deg=',r['p95_deg'],
+                    'miss_5deg=',r['miss_rate_5deg'],'gate=',r['meets_quality_gate'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fb-gaze-01-evidence
+          path: results/phase1-ci/
