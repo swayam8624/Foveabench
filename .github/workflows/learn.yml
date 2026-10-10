@@ -35,8 +35,22 @@ jobs:
           assert {'hold','velocity','learned'}=={r['model'] for r in rows if r['movement']=='ALL'}
           print('ML_TRAINING_PASS',m['best_epoch'],m['heldout_learned_mean_deg'])
           PY
+      - name: Test learned model rendering data interchange
+        run: python -m unittest discover -s tests -p test_learn_bridge.py -v
+      - name: Install Vulkan for learned predictor rendering comparison
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build libvulkan-dev mesa-vulkan-drivers glslang-tools
+      - name: Execute paired trained hold and velocity Vulkan renderer
+        run: |
+          python -m foveabench.learn_bridge prepare --ml-output results/learn-ci --output results/learn-render-ci --condition latency-60 --max-frames 24
+          python -m foveabench.learn_bridge render --prepared results/learn-render-ci
+          test -f results/learn-render-ci/comparison.csv
+          cat results/learn-render-ci/report.md
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: fb-learn-supervised
-          path: results/learn-ci/
+          path: |
+            results/learn-ci/
+            results/learn-render-ci/

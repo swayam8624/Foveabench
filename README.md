@@ -13,6 +13,17 @@ and is **not RL, a physical GPU benchmark, or a validated human model**.
     cat results/ml-first/report.md
 
 See [training methodology](docs/ML_TRAINING.md).
+## Compare a trained gaze model through actual Vulkan compute
+
+Use [FB-LEARN-RENDER](docs/ML_RENDER_COMPARISON.md) to export exactly
+matched held-out gaze traces and run hold, velocity and trained neural
+predictions through all nine motion/model Vulkan workloads. Includes tqdm
+progress, paired per-frame image-error diagnostics and hardware qualification.
+These are exploratory synthetic test-set analyses, **not fresh sealed validation**.
+
+    python -m foveabench.learn_bridge prepare --ml-output results/ml-utm-20261010T153731Z --output results/learned-render-001
+    python -m foveabench.learn_bridge render --prepared results/learned-render-001
+    cat results/learned-render-001/report.md
 ## Phase 3: FB-CAMPAIGN-01 — disjoint experimental campaigns (October 2026)
 
 **Verified in Ubuntu and Ubuntu ARM64 GitHub Actions:** an unattended Phase 1 study generates 57,600 gaze-model records; Phase 3 compares predictor choices with identity-disjoint train/validation/test sets, paired held-out cluster bootstrap intervals, loss/availability accounting and SHA-256 input provenance. It is a **full-information offline policy selector, NOT reinforcement learning**. Only synthetic agents have been tested; empirical/human validity is unproven. 
