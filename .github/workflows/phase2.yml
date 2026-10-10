@@ -4,7 +4,11 @@ on:
   pull_request:
 jobs:
   vulkan-software:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     env:
       VK_LOADER_DEBUG: error
@@ -49,7 +53,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: fb-vulkan-and-parallel-evidence
+          name: fb-vulkan-and-parallel-evidence-${{ matrix.os }}
           path: |
             results/ci-trace.csv
             results/phase2-ci/
