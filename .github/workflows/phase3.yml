@@ -1,0 +1,62 @@
+name: FB-CAMPAIGN-01 autonomous held-out study
+on:
+  push:
+  pull_request:
+jobs:
+  synthetic-holdout:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Leak-proof regression tests
+        run: python -m unittest discover -s tests -p test_phase3.py -v
+      - name: Train-only offline selector and heldout analysis
+        run: python -m foveabench.phase3 run --generate-phase1 --output results/phase3-ci --seed 20261010
+      - name: Verify campaign metadata
+        run: |
+          python - <<'PY'
+          import json,csv,pathlib
+          p=pathlib.Path('results/phase3-ci')
+          m=json.loads((p/'manifest.json').read_text())
+          assert m['frame_model_rows']==57600
+          assert m['spec_version']=='FB-CAMPAIGN-01/3.0'
+          assert not m['human_perception_validated'] and not m['real_gpu_score_qualified']
+          with (p/'splits.csv').open() as f: rows=list(csv.DictReader(f))
+          assert len(rows)==12 and len({r['subject_id'] for r in rows})==12
+          assert {r['split'] for r in rows}=={'train','validation','test'}
+          print('PHASE3_PASS',m['frame_model_rows'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase3-campaign
+          path: results/phase3-ci/
+  three-phase-arm64:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Mesa Vulkan and shader tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build libvulkan-dev mesa-vulkan-drivers vulkan-tools glslang-tools
+      - name: Run independent concurrent tracks
+        run: bash scripts/run_three_tracks.sh results/three-track-ci
+      - name: Verify Vulkan and offline campaign evidence
+        run: |
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('results/three-track-ci')
+          assert '- Phase 3: PASS' in (p/'STATUS.md').read_text()
+          m=json.loads((p/'phase3/manifest.json').read_text())
+          assert m['frame_model_rows']==57600
+          v=json.loads((p/'phase2/manifest.json').read_text())
+          assert not v['hardware_score_eligible']
+          print('THREE_TRACKS_PASS',v['results_class'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3-three-tracks-arm64
+          path: results/three-track-ci/
