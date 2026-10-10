@@ -36,6 +36,10 @@ python -m foveabench run --preset study --output results/study-001
 - Computes unweighted RGB MSE, PSNR, a clearly uncalibrated Gaussian gaze-weighted MSE/PSNR, and 5° foveal MSE with errors anchored to **true** gaze.
 - Records per-frame and condition-aggregate CSV files, two example frames per condition, a simple SVG result plot, SHA-256 hashes for input trace files, a machine-readable manifest and a status ledger.
 
+## First verified CI result
+
+An initial Ubuntu-hosted GitHub Actions smoke run completed **360 modeled frames across 30 condition combinations**, and **5 numerical unit tests passed**. The artifacts are attached to https://github.com/swayam8624/Foveabench/actions/runs/38041402849 . This is not an ARM64-UTM validation and not a real GPU benchmark. Subsequent revisions include a short-trace saccade-switch regression test.
+
 ## Interpreting the output responsibly
 
 The important first graph compares **modeled sample fraction** against **gaze-weighted MSE**. Neither quantity is a measured GPU speedup or a clinically/perceptually validated metric. The `cpu_model_ms` values are diagnostic local wall times subject to OS scheduling, VM overhead, software version, and thermal load; **never use them as evidence of GPU performance**. Foveated rendering also has geometry, bandwidth, tracking, interpolation, display, temporal artifact and latency costs that this model omits.
