@@ -2,6 +2,25 @@
 
 **Version 0.1: reproducible gaze replay and a CPU image-space foveation reference model.** This is an independent research harness for the Virginia Tech / XR research direction. It is **not** an ILLIXR starter-task solution, a physical XR runtime, an FPGA testbench, or a measured Vulkan/GPU benchmark.
 
+## Phase 2: FB-RENDER-01 — native Vulkan and concurrent execution (October 10, 2026)
+
+A **real headless Vulkan compute workload** (C++17 / SPIR-V) now consumes a versioned gaze trace, renders four image-space foveation policies on two stress scenes, checks full-reference byte equality, and records **Vulkan device timestamps** where the compute queue supports them. It exports frames, numerical quality proxies, hardware/driver capability manifests, and uncertainty-relevant timing distributions. It probes `VK_KHR_fragment_shading_rate` support but **does not implement hardware VRS or integrate a live ILLIXR renderer yet**. Software Vulkan (e.g., Mesa Lavapipe) is explicitly excluded from hardware performance rankings.
+
+Run in Ubuntu on UTM (or physical Linux; needs Vulkan/GLSL tools):
+
+```bash
+sudo apt update
+sudo apt install -y cmake clang ninja-build libvulkan-dev mesa-vulkan-drivers vulkan-tools glslang-tools
+python3 -m foveabench.phase2 make-trace --output results/vk-trace.csv --frames 32
+python3 -m foveabench.phase2 run --trace results/vk-trace.csv --output results/vk-run --frames 32
+cat results/vk-run/report.md
+
+# Both Phase 1 and Phase 2 actually execute concurrently (separate evidence folders):
+bash scripts/run_dual_tracks.sh
+```
+
+See [exact Phase 2 setup and scientific limitations](docs/PHASE2_VULKAN.md) and [verified CI workflows](https://github.com/swayam8624/Foveabench/actions). The CI workflow tests Vulkan software execution on **Ubuntu 24.04 AMD64 and ARM64**; this is not a validation of an actual UTM desktop environment.
+
 ## Phase 1: FB-GAZE-01 (October 2026)
 
 **Autonomous gaze prediction and replay study:** 12 procedural trace streams × 10 sensor conditions × 2 causal predictors × 240 frames = **57,600 frame/predictor/condition evaluations**. No external data, head-mounted display, ILLIXR codebase or Vulkan device needed for this first *scientific scaffold*. The results are **synthetic and geometric only**: not actual GPU measurements, validated human perception or human participants.
