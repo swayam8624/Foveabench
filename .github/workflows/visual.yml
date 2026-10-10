@@ -1,0 +1,56 @@
+name: FB-VISUAL-01 native frame capture and human-paper registry
+on:
+  push:
+  pull_request:
+jobs:
+  visual-vulkan-software:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Mesa / Vulkan / shader toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build libvulkan-dev mesa-vulkan-drivers glslang-tools
+          python3 -m venv .venv
+          .venv/bin/pip install -e .
+      - name: Use isolated Python virtual environment
+        run: echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+      - name: Test PNG, gaze timebase, data contracts, and paper checks
+        run: |
+          python3 -m unittest discover -s tests -p 'test_showcase.py' -v
+          python3 -m unittest discover -s tests -p 'test_paper_validation.py' -v
+          python3 -m unittest discover -s tests -p 'test_learn_transfer.py' -v
+          python3 -m foveabench.paper_validation registry
+      - name: Capture real Vulkan outputs and generate visible viewer
+        run: |
+          python3 -m foveabench.showcase run --output results/visual-ci --motion hybrid --delay-ms 60 --frames 12 --width 128 --height 72
+          cat results/visual-ci/report.md
+      - name: Verify native captured images and provenance
+        run: |
+          python3 - <<'PY'
+          import csv,json,pathlib
+          r=pathlib.Path('results/visual-ci')
+          native=json.loads((r/'native/manifest.json').read_text())
+          visual=json.loads((r/'viewer/manifest.json').read_text())
+          captures=list((r/'viewer/assets').glob('*.png'))
+          assert native['frame_policy_evaluations']==96
+          assert native['capture_every']==1
+          assert native['full_reference_pixel_mismatch_max']==0
+          assert native['actual_hardware_vrs'] is False
+          assert visual['captured_images']==96
+          assert len(captures)==96
+          assert all(p.read_bytes()[:8]==b'\x89PNG\r\n\x1a\n' for p in captures)
+          assert '__FRAME_DATA__' not in (r/'viewer/index.html').read_text()
+          assert len(list(csv.DictReader((r/'native/frames.csv').open())))==96
+          print('VISUAL_NATIVE_CAPTURE_PASS',native['device_name'],visual['captured_images'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fb-visual-vulkan-${{ matrix.os }}
+          path: results/visual-ci/

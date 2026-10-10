@@ -1,0 +1,69 @@
+{
+  "schema": "FB-PAPER-REGISTRY/1.0",
+  "purpose": "Roadmap of externally published results; catalogue entries are NOT implemented reproductions",
+  "papers": [
+    {
+      "id": "ETRA-2026-MELNYK-GAZE",
+      "title": "Gaze Prediction as Time-Series Forecasting for Virtual Reality Applications: Quantifying Performance Variability and Extreme-Case Errors",
+      "year": 2026,
+      "publication": "ETRA 2026",
+      "url": "https://doi.org/10.1145/3797246.3803043",
+      "code_and_supplement_url": "https://hdl.handle.net/10877/23835",
+      "study_kind": "Measured human gaze trajectories; no subjective visual quality ratings",
+      "required_datasets": ["GazeBaseVR: RAN task (250 Hz)", "Meta Quest Pro 90 Hz sample data (access check required)"],
+      "published_examples": [
+        {"dataset": "GazeBaseVR", "event": "fixation", "predictor": "CTEF", "horizon_ms": 40, "sample_p50_deg": 0.174, "sample_p95_deg": 0.59},
+        {"dataset": "GazeBaseVR", "event": "large-saccade", "predictor": "CTEF", "horizon_ms": 40, "sample_p50_deg": 2.7, "sample_p95_deg": 8.67},
+        {"dataset": "Quest Pro", "event": "fixation", "predictor": "CTEF", "horizon_ms": 44, "sample_p50_deg": 0.46, "sample_p95_deg": 1.55}
+      ],
+      "replication_requirements": ["Same 40/44 ms forecast horizon", "Subject-wise five-fold splits and no subject leakage", "Correct binocular/optical coordinates and degree conventions", "Match event segmentation, critical evaluation periods and statistical summaries", "Reproduce LSTM/CTEF/ClPr or inspect official code first", "Report reproduction gap with uncertainty"],
+      "state": "not_reproduced"
+    },
+    {
+      "id": "SIGGRAPH-2021-FOVVIDEOVDP",
+      "title": "FovVideoVDP: A Visible Difference Predictor for Wide Field-of-View Video",
+      "year": 2021,
+      "publication": "ACM Transactions on Graphics (SIGGRAPH)",
+      "url": "https://doi.org/10.1145/3450626.3459831",
+      "code_and_supplement_url": "https://github.com/gfxdisp/FovVideoVDP",
+      "published_metrics_url": "https://www.cl.cam.ac.uk/research/rainbow/projects/fovvideovdp/html_reports/benchmark/",
+      "study_kind": "Human visual quality ratings and calibrated foveated video visible-difference modeling",
+      "published_examples": [{"metric": "SROCC", "dataset": "FovDots", "value": 0.769}, {"metric": "SROCC", "dataset": "LIVE-FBT-FCVR", "value": 0.7913}],
+      "replication_requirements": ["Recover legal access to paired stimulus/reference videos and human MOS/JOD ratings", "Use official FovVideoVDP implementation and pin exact version", "Match display resolution, field of view, ppd, luminance, EOTF and fixation coordinates", "Reproduce rank correlation and JOD regression methodology", "Compare our predictions against ratings without tuning on the test subjects"],
+      "state": "not_reproduced"
+    },
+    {
+      "id": "MLSYS-2023-XRBENCH",
+      "title": "XRBench: An Extended Reality (XR) Machine Learning Benchmark Suite for the Metaverse",
+      "year": 2023,
+      "publication": "MLSys",
+      "url": "https://proceedings.mlsys.org/paper_files/paper/2023/hash/07b7c2f8a6978e376f9656d69619bfbb-Abstract-mlsys2023.html",
+      "code_and_supplement_url": "https://github.com/XRBench/XRBench-MLSys2023",
+      "study_kind": "Simulated real-time multi-model XR timing and energy scoring; NOT human subjective ratings",
+      "replication_requirements": ["Pin MAESTRO version and architecture assumptions", "Reproduce official Figure 5/6 deterministic scenarios", "Reproduce Figure 7 trends with repeated-seed statistics", "Preserve energy/deadline/accuracy/frame-drop definitions", "Only then compare compatible metrics against FoveaBench"],
+      "state": "not_reproduced"
+    },
+    {
+      "id": "SCIDATA-2023-GAZEBASEVR",
+      "title": "GazeBaseVR, a large-scale, longitudinal, binocular eye-tracking dataset collected in virtual reality",
+      "year": 2023,
+      "publication": "Scientific Data",
+      "url": "https://www.nature.com/articles/s41597-023-02075-5",
+      "dataset_url": "https://figshare.com/articles/dataset/GazeBaseVR_Data_Repository/21308391",
+      "study_kind": "Empirical sensor dataset descriptor; NOT rendering perceptual judgements",
+      "published_examples": [{"recordings": 5020, "participants": 407, "frequency_hz": 250}],
+      "replication_requirements": ["Download 2.3 GB primary recordings and retain license/provenance", "Verify subject counts, task categories, sample times, eye-channel transformations", "Validate predictions on entirely disjoint real participant IDs", "Do not confuse matching recording counts with validating perceptual realism"],
+      "state": "not_ingested"
+    },
+    {
+      "id": "FOVEATED-METAMERS",
+      "title": "Foveated metamers behavioral experiments",
+      "year": null,
+      "publication": "Public perceptual experiment code and artifacts",
+      "url": "https://github.com/billbrod/foveated-metamers",
+      "study_kind": "Human psychophysical discrimination tests on metamerized images",
+      "replication_requirements": ["Identify exact peer-reviewed paper, archive and human test dataset", "Match original stimulus geometries, viewing conditions and display calibration", "Reproduce behavioral contrast/recognition threshold with official models", "Map our image quality predictions to measured human results after data access"],
+      "state": "research_candidate_unverified"
+    }
+  ]
+}
