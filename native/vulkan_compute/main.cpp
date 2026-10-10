@@ -370,6 +370,18 @@ int main(int argc,char** argv) {
         auto gaze=read_trace(s.trace,s.max_frames);
         auto spirv=read_bytes(s.shader);
         VulkanContext vk; vk.initialize(s);
+        // Warm up pipeline/device/cache before collecting timestamped samples.
+        // These dispatches are never included in per-frame scores or output.
+        // Warmup cannot fully stabilize thermals/clock state; no hardware
+        // performance ranking is issued by this diagnostic suite.
+        {
+            auto stimulus=scene(s.width,s.height,0,0);
+            std::vector<uint32_t> discard(stimulus.size());
+            for (int mode=0;mode<4;mode++) {
+                Push warm{s.width,s.height,mode,8,.5f,.5f,5.f,15.f};
+                for (int r=0;r<3;r++)vk.dispatch(stimulus,discard,warm);
+            }
+        }
         fs::create_directories(s.output/"frames");
         std::ofstream csv(s.output/"frames.csv");
         csv<<"scene,policy,frame_index,timestamp_ns,truth_x,truth_y,used_x,used_y,device_dispatch_ms,"
@@ -406,6 +418,8 @@ int main(int argc,char** argv) {
         csv.close();
         if(max_full_mismatch!=0)throw std::runtime_error("GPU full-resolution output differs from reference input!");
         bool software=vk.props.deviceType==VK_PHYSICAL_DEVICE_TYPE_CPU;
+        bool realgpu=(vk.props.deviceType==VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU ||
+                      vk.props.deviceType==VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU);
         std::ofstream man(s.output/"manifest.json");
         man<<"{\n  \"suite\": \"FB-RENDER-01/2.0\",\n  \"workload\": \"headless-vulkan-compute-image-space\",\n"
               "  \"actual_hardware_vrs\": false,\n  \"actual_fragment_shader_invocations_measured\": false,\n"
