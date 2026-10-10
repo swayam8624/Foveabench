@@ -49,6 +49,8 @@ jobs:
           cat results/learn-render-ci/report.md
       - name: Check transfer evaluator contracts
         run: python -m unittest discover -s tests -p test_learn_transfer.py -v
+      - name: Inspect saved original ML blending decisions
+        run: python -m foveabench.learn_transfer inspect --ml-output results/learn-ci
       - name: Generate unseen synthetic identities for frozen-model transfer
         run: |
           python - <<'PY'
