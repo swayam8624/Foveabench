@@ -73,7 +73,8 @@ def gaze_trace(kind: str, frames: int, hz: int) -> list[Gaze]:
             x = .50 + .30 * math.sin(2 * math.pi * .65 * t)
             y = .50 + .12 * math.sin(2 * math.pi * .33 * t)
         else:  # Controlled abrupt changes; not a physiological saccade model.
-            x, y = ((.22, .32) if (i // max(1, hz // 3)) % 2 == 0
+            segment_frames = max(2, min(hz // 3, frames // 3))
+            x, y = ((.22, .32) if (i // segment_frames) % 2 == 0
                     else (.78, .68))
         out.append(Gaze(round(i * 1_000_000_000 / hz), x, y))
     assert_gaze(out)
@@ -339,6 +340,7 @@ def run(preset: str, output: Path) -> None:
         "fov_degrees": [H_FOV_DEG, V_FOV_DEG],
         "foveal_threshold_deg": FOVEA_DEG, "middle_threshold_deg": MIDDLE_DEG,
         "tile_px": TILE_PX, "traces_sha256": hashes,
+        "runner_source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "software": {"python": sys.version.split()[0], "numpy": np.__version__,
                      "system": platform.platform(), "machine": platform.machine()},
         "evidence": "synthetic-trace synthetic-scene CPU image-space reference model",
