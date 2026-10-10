@@ -50,10 +50,11 @@ def checkpoint(ml_dir):
     if not np.isfinite(np.concatenate([*map(lambda x:x.ravel(),params),means,scales])).all() or (scales<=0).any():
         raise ValueError("Invalid or nonfinite checkpoint values")
     known=set()
-    for row in csv.DictReader(partition.open(newline="")):
-        if row["subject_id"] in known:
-            raise ValueError("Duplicate subject in training partitions")
-        known.add(row["subject_id"])
+    with partition.open(newline="") as partition_file:
+        for row in csv.DictReader(partition_file):
+            if row["subject_id"] in known:
+                raise ValueError("Duplicate subject in training partitions")
+            known.add(row["subject_id"])
     if not known:
         raise ValueError("Missing original identity register")
     return params,means,scales,known,manifest,source
@@ -66,16 +67,28 @@ def inspection(args):
     records=defaultdict(list)
     with p.open(newline="") as f:
         r=csv.DictReader(f)
-        required={"condition","trace_id","velocity_weight","subject_id"}
-        if not required.issubset(r.fieldnames or []):
+        required={"condition","trace_id","subject_id"}
+        columns=set(r.fieldnames or ())
+        if not required.issubset(columns):
             raise ValueError("Missing learned prediction audit fields")
+        # FB-LEARN-01 uses blend_weight; FB-LEARN-TRANSFER uses velocity_weight.
+        # Do not require only one spelling or re-train a checkpoint to inspect it.
+        weight_field=next((name for name in ("blend_weight","velocity_weight") if name in columns),None)
+        if weight_field is None:
+            raise ValueError("Missing blend_weight or velocity_weight in predictions")
+        print(f"[INSPECT] Using saved inference column {weight_field}; no training or model modification",flush=True)
         for row in tqdm(r,desc="Examining frozen neural actions",unit="frames"):
-            weight=float(row["velocity_weight"]) if "velocity_weight" in row else float(row["blend_weight"])
+            try:
+                weight=float(row[weight_field])
+            except (ValueError,TypeError):
+                raise ValueError(f"Invalid policy weight at row {r.line_num}") from None
             if not np.isfinite(weight) or weight<0 or weight>1:
-                raise ValueError("Invalid policy blending weight")
+                raise ValueError(f"Invalid policy blending weight at row {r.line_num}")
             motion=row["trace_id"].rsplit("-",1)[0]
             records["ALL"].append(weight)
             records[motion].append(weight)
+    if not records["ALL"]:
+        raise ValueError("Empty learned prediction audit")
     print("\n=== NEURAL CONTROLLER: HOW OFTEN DOES IT TRUST VELOCITY? ===")
     for kind,w in sorted(records.items()):
         a=np.asarray(w)
