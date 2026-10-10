@@ -121,6 +121,41 @@
       "availability": "catalogued_not_downloaded",
       "role": "per-model licensed render testing",
       "url": "https://github.com/KhronosGroup/glTF-Sample-Assets"
+    },
+    {
+      "id": "ETH3D",
+      "kind": "calibrated multi-view/stereo/SLAM scenes",
+      "availability": "catalogued_not_downloaded",
+      "role": "3D scene/depth/pose research; CC BY-NC-SA 4.0",
+      "url": "https://eth3d.ethz.ch/"
+    },
+    {
+      "id": "DTU MVS",
+      "kind": "controlled multi-view structured-light reconstructions",
+      "availability": "catalogued_not_downloaded",
+      "role": "geometry/lighting/camera stress; large archive",
+      "url": "https://roboimagedata.compute.dtu.dk/?page_id=36"
+    },
+    {
+      "id": "uCO3D",
+      "kind": "170k object videos, camera poses and 3DGS",
+      "availability": "catalogued_not_downloaded",
+      "role": "neural object rendering, 3DGS workloads; ~19.3TB full",
+      "url": "https://github.com/facebookresearch/uco3d"
+    },
+    {
+      "id": "CO3D",
+      "kind": "multi-view object videos and 3D point clouds",
+      "availability": "catalogued_not_downloaded",
+      "role": "novel-view and reconstruction workloads",
+      "url": "https://ai.meta.com/datasets/CO3D-dataset/"
+    },
+    {
+      "id": "Mip-NeRF 360",
+      "kind": "360-degree neural view-synthesis scenes",
+      "availability": "catalogued_not_downloaded",
+      "role": "neural renderer scene quality benchmarking",
+      "url": "https://storage.googleapis.com/gresearch/refraw360/360_v2.zip"
     }
   ]
 }
