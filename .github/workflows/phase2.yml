@@ -1,0 +1,60 @@
+name: FB-RENDER-01 Vulkan native smoke and dual execution
+on:
+  push:
+  pull_request:
+jobs:
+  vulkan-software:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      VK_LOADER_DEBUG: error
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native Vulkan / SPIR-V / Mesa
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build libvulkan-dev vulkan-tools mesa-vulkan-drivers glslang-tools
+      - name: Validate Python Phase 2 evidence contract
+        run: python3 -m unittest discover -s tests -p test_phase2.py -v
+      - name: Discover Vulkan ICD and physical devices
+        run: |
+          vulkaninfo --summary
+          ls -l /usr/share/vulkan/icd.d/
+      - name: Build and run actual offscreen Vulkan benchmark
+        run: |
+          python3 -m foveabench.phase2 make-trace --output results/ci-trace.csv --frames 16
+          python3 -m foveabench.phase2 run --trace results/ci-trace.csv --output results/phase2-ci --frames 16
+          cat results/phase2-ci/report.md
+      - name: Verify provenance and Vulkan output
+        run: |
+          python3 - <<'PY'
+          import json,csv,pathlib
+          d=pathlib.Path('results/phase2-ci')
+          m=json.loads((d/'manifest.json').read_text())
+          rows=list(csv.DictReader((d/'frames.csv').open()))
+          assert m['suite']=='FB-RENDER-01/2.0'
+          assert len(rows)==128, len(rows)
+          assert m['frame_policy_evaluations']==128
+          assert m['full_reference_pixel_mismatch_max']==0
+          assert not m['actual_hardware_vrs']
+          assert not m['scientific_qualification']['human_validated']
+          assert all(int(r['pixel_mismatch'])==0 for r in rows if r['policy']=='full')
+          assert len(list(csv.DictReader((d/'summary.csv').open())))==8
+          print('NATIVE_VULKAN_SMOKE_PASS:',m['device_name'],m['results_class'])
+          PY
+      - name: Run Phase 1 and Phase 2 simultaneously
+        run: |
+          bash scripts/run_dual_tracks.sh results/ci-dual
+          cat results/ci-dual/STATUS.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fb-vulkan-and-parallel-evidence-${{ matrix.os }}
+          path: |
+            results/ci-trace.csv
+            results/phase2-ci/
+            results/ci-dual/

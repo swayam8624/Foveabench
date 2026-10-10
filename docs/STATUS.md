@@ -31,3 +31,14 @@ Next: execute smoke under CI and locally, audit artifacts, run ARM64 Ubuntu on U
 - **Recorded dataset ingestion:** strict profile and license/consent metadata contract available; no third-party dataset downloaded or run yet.
 - **GPU / ILLIXR / human validity:** still NOT_IMPLEMENTED or NOT_TESTED. Do not promote simulated angular-error scores to human perceptual ratings.
 - **Next gate:** real empirical trace converter and native Vulkan time-instrumented renderer, plus reproduction on ARM64 UTM.
+
+## October 10, 2026 — Native Phase 2 development checkpoint
+
+- **FB-RENDER-01 Vulkan compute backend:** IMPLEMENTED and verified under Mesa software Vulkan on both hosted Ubuntu 24.04 AMD64 and ARM64. GLSL→SPIR-V, Vulkan queue/dispatch, host buffer readback, synthetic scene and gaze policy comparisons are actual native operations.
+- **Per-frame Vulkan device timestamps:** QUERY PATH EXECUTED (where queue timestamp capabilities exist); values are software-driver device times on CI, **not GPU performance claims**.
+- **Concurrent execution:** PASSED. `scripts/run_dual_tracks.sh` ran the independent 57,600-prediction Phase 1 suite simultaneously with the native Phase 2 benchmark, each in its own result directory.
+- **Phase 1 → Phase 2 interchange:** IMPLEMENTED with strict timestamps, coordinate validation and explicit missing-prediction fallback.
+- **True hardware spatial VRS:** NOT IMPLEMENTED, only feature discovery. Real GPU measurements remain NOT_RUN.
+- **ILLIXR runtime plugin:** NOT IMPLEMENTED (external trace interchange designed; no starter-task source or solutions used).
+- **User's local UTM VM execution:** NOT YET VERIFIED.
+- **XR live-versus-replay and participant validation:** NOT PERFORMED.
