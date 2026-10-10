@@ -2,6 +2,23 @@
 
 **Version 0.1: reproducible gaze replay and a CPU image-space foveation reference model.** This is an independent research harness for the Virginia Tech / XR research direction. It is **not** an ILLIXR starter-task solution, a physical XR runtime, an FPGA testbench, or a measured Vulkan/GPU benchmark.
 
+## Phase 3: FB-CAMPAIGN-01 — disjoint experimental campaigns (October 2026)
+
+**Verified in Ubuntu and Ubuntu ARM64 GitHub Actions:** an unattended Phase 1 study generates 57,600 gaze-model records; Phase 3 compares predictor choices with identity-disjoint train/validation/test sets, paired held-out cluster bootstrap intervals, loss/availability accounting and SHA-256 input provenance. It is a **full-information offline policy selector, NOT reinforcement learning**. Only synthetic agents have been tested; empirical/human validity is unproven. 
+
+```bash
+# No headset, Vulkan or new dataset download is needed for standalone Phase 3:
+python3 -m foveabench.phase3 datasets
+python3 -m foveabench.phase3 run --generate-phase1 --output results/phase3-first --seed 20261010
+cat results/phase3-first/report.md
+
+# To run Phase 1 and Phase 2 concurrently, then Phase 3 after Phase 1 is finished:
+# (requires Vulkan and GLSL tools from Phase 2)
+bash scripts/run_three_tracks.sh
+```
+
+See [Phase 3 methods](docs/PHASE3_CAMPAIGNS.md), [17-item dataset inventory](benchmark_spec/datasets/registry.json) and [GitHub CI](https://github.com/swayam8624/Foveabench/actions). Catalogued external datasets are **not downloaded** and their license/access requirements still apply. Simulated context-specific choices are not directly deployable online controllers; no claimed XR perceptual or hardware score.
+
 ## Phase 2: FB-RENDER-01 — native Vulkan and concurrent execution (October 10, 2026)
 
 A **real headless Vulkan compute workload** (C++17 / SPIR-V) now consumes a versioned gaze trace, renders four image-space foveation policies on two stress scenes, checks full-reference byte equality, and records **Vulkan device timestamps** where the compute queue supports them. It exports frames, numerical quality proxies, hardware/driver capability manifests, and uncertainty-relevant timing distributions. It probes `VK_KHR_fragment_shading_rate` support but **does not implement hardware VRS or integrate a live ILLIXR renderer yet**. Software Vulkan (e.g., Mesa Lavapipe) is explicitly excluded from hardware performance rankings.
