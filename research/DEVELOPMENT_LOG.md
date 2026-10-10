@@ -1,0 +1,33 @@
+# Chronological implementation and experiment development log
+
+This log is append-only in intent: dated corrections should be added rather than retroactively rewriting outcomes. Dates are GitHub commit UTC times unless explicitly marked as user's UTM session (their local clock was UTC+05:30). Branch and merge SHA are auditable at [`commits`](https://github.com/swayam8624/Foveabench/commits/main/). Historical claims should not be confused with current state.
+
+| ID | UTC date | Git commit / artifact | Work completed / event | Failure, constraint or lesson |
+|---|---|---|---|---|
+| **D-000** | 2026-09-22 | [`0c9eef1`](https://github.com/swayam8624/Foveabench/commit/0c9eef1bb0fe) | Repository initialized; initial LICENSE | No benchmark code existed yet |
+| **D-001** | 2026-10-10 09:30 | [`30e72ea`](https://github.com/swayam8624/Foveabench/commit/30e72eaebb7f) | Reference procedural image-space sampling, synthetic gaze, fixed/full/tracked/lag policies, PPM/SVG/csv evidence, initial tests and conceptual XR audit | Reference shader demand is a proxy, not actual Vulkan or GPU VRS |
+| **D-002** | 2026-10-10 10:17 | [`67c4794`](https://github.com/swayam8624/Foveabench/commit/67c47946cef5) | Phase 1: versioned gaze specification, strict dataset/metadata contract, causal hold/velocity, replay latency/noise/dropout, 57,600 study outcomes, GitHub Ubuntu CI | Procedural agent IDs, not participants; no native renderer |
+| **D-003** | 2026-10-10 10:32 | [`9d0b0af`](https://github.com/swayam8624/Foveabench/commit/9d0b0af759b3) | Phase 2: native Vulkan C++ compute, GLSL shader, physical device detection, timestamp query capabilities and readback, Python trace bridge, ARM64/AMD64 workflows, concurrent dual-track orchestration | Compute image-space approximation, **not actual raster fragment shading-rate**; Mesa llvmpipe not hardware speed |
+| **D-004** | Oct 10 native Vulkan CI iteration | included in Phase 2 merged code | Fix native CSV header expecting LF while Python `csv.writer` uses CRLF; make decoder trim trailing carriage return | Representative cross-language boundary defect, now covered by CI |
+| **D-005** | 2026-10-10 11:50 | [`925915d`](https://github.com/swayam8624/Foveabench/commit/925915dd8a27) | Phase 3: paired subject-ID split, offline training-only policy selection, synthetic uncertainty, dataset campaigns and reports | Train labels and synthetic bootstrap are not online/RL or human inference |
+| **D-006** | 2026-10-10 11:52 | [`726ac76`](https://github.com/swayam8624/Foveabench/commit/726ac76ce44a), [`6d18dce`](https://github.com/swayam8624/Foveabench/commit/6d18dceb2715) | Registry expanded to 22 entries: two procedural; 20 external catalogued but not installed | External links do not establish access, license or downloaded bytes |
+| **D-007** | 2026-10-10 user's UTM session | `results/utm-vulkan-20261010T151919Z` | Real UTM Ubuntu ARM64 8-vCPU llvmpipe Vulkan 128 dispatches and full-pixel invariant; Phase 1–3 launcher 3/3 PASS in `three-tracks-utm-20261010T152017Z` | Historical `docs/STATUS.md` says UTM unverified; that is now superseded for the specific runs |
+| **D-008** | 2026-10-10 user's UTM session | `results/linked-gaze-render-20261010T152147Z` | Connected Phase 1 hold vs velocity predictions to 768 native Vulkan compute dispatches | First 48 frames only; trends may depend on temporal subset |
+| **D-009** | 2026-10-10 15:33 | [`3b18f0b`](https://github.com/swayam8624/Foveabench/commit/3b18f0b8015a) | Genuine supervised NumPy Adam neural gate with tqdm/epoch loss, checkpoints, subject-disjoint training and held-out evaluation; ARM64 CI passed | Trained does not beat hold overall (F-008). Avoid claiming RL |
+| **D-010** | 2026-10-10 15:43 | [`20041f9`](https://github.com/swayam8624/Foveabench/commit/20041f927382) | Matched learned/hold/velocity-to-native Vulkan nine-job suite with per-frame MSE, timestamp/ground-truth alignment and progress logs | 16,848 user UTM dispatches. Test partition previously examined (exploratory) |
+| **D-011** | 2026-10-10 15:50 | [`4efdb3d`](https://github.com/swayam8624/Foveabench/commit/4efdb3dc9f75) | Frozen checkpoint transfer, original-ID exclusion, new-seed synthetic profile, inspection of blend weights | Initial inspector `velocity_weight` versus `blend_weight` mismatch and `ResourceWarning`; addressed in D-012 |
+| **D-012** | 2026-10-10 16:11 | [`ba1d50b`](https://github.com/swayam8624/Foveabench/commit/ba1d50bdb9de) | Native per-frame capture opt-in, PNG/HTML viewer for true captured Vulkan images, paper/subjective ranking evaluation register, fixed inspection field and file handle, CI on AMD64 + ARM64 | Viewer is prerecorded and synthetic, not Cinebench-equivalent real 3D/raster hardware workload |
+| **D-013** | 2026-10-10 user's UTM session | `results/transfer-utm-20261010T155306Z` | Frozen checkpoint assessed on 12 new synthetic pseudonymous identities, 28,474 pairs | Hold wins overall, pursuit subset improves; source generator is not novel population |
+| **D-014** | 2026-10-10, this documentation package | `research/*`, `scripts/research_archive.py`, CI docs tests | Add novelty/claims, per-module mapping, exact local/CI results and provenance, chronological incidents, experiment archiving/verification and future validation gates | Archive hashes require raw files to remain accessible; no genuine human or physical GPU claims added |
+
+## Milestone decisions and open issues
+
+- **Technical infrastructure works:** source-shader compilation, CPU-Vulkan compute, trace interchange, model training, frozen prediction analysis, PNG replay and corpus inventory all exercised in specific runs.
+- **Scientific claim still absent:** we do not yet know whether this automated bench predicts real humans, real headset performance or algorithm rankings under live conditions.
+- **First supervised ML model is a useful negative result:** stronger architecture/epochs are unjustified until objective, data diversity, temporal context and credible real-world comparisons are developed.
+- **Correct failure response:** keep failing/negative evidence, publish fixes with testcases, preserve exact commands and avoid deleting underperforming baselines.
+- **Official ILLIXR starter-task AI restrictions** continue to apply; code is independent; no unauthorized starter task solution is recorded.
+
+## Future log entry template
+
+`D-NNN | UTC timestamp | branch/commit + PR | changed code or research claim | exact command + seed | data license + checksum | hardware/device type + driver | result metrics + uncertainty + run folder hash | failed expectations/bugs | qualification class | follow-up owner/date`.

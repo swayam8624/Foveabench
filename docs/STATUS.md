@@ -50,3 +50,17 @@ Next: execute smoke under CI and locally, audit artifacts, run ARM64 Ubuntu on U
 - **ARM64 three-track execution**: PASSED. Phase 1/2 launched concurrently; Phase 3 consumed Phase 1 evidence after it completed. Workflow: https://github.com/swayam8624/Foveabench/actions/runs/38049717202
 - **22 dataset catalog entries**: 2 generated procedural sources, 20 external sources **not downloaded** or gated. Registry does not assert redistribution rights.
 - **Actual RL optimization**, empirical gaze measurements, real GPU VRS, live ILLIXR integration, headset power, perceptual subjects: NOT IMPLEMENTED/NOT VALIDATED.
+
+## Current research record supplement — 2026-10-10 (UTM user evidence and CI)
+
+This page originally predates UTM verification. The **current, evidence-classified**
+results superseding its historical `NOT_RUN` row are in
+[`research/RESULTS.md`](../research/RESULTS.md) and
+[`research/STATUS.json`](../research/STATUS.json). User terminal output from
+Oct 10 establishes 128 native software-Vulkan dispatches and a three-track
+Phase1/2/3 pass on the user's UTM VM; later user output establishes 16,848
+learned-model render dispatches and 28,474 fresh-synthetic-ID frozen-model
+prediction pairs. No physical GPU VRS, human-quality validation, published
+paper replication or RL agent is proven. The historical table above is
+preserved instead of silently rewriting its original timing. See
+[`research/DEVELOPMENT_LOG.md`](../research/DEVELOPMENT_LOG.md).
