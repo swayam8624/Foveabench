@@ -1,0 +1,42 @@
+#version 450
+// Portable image-space foveation reference workload, not hardware fragment VRS.
+// Every output pixel executes a compute invocation. Report NO shader savings.
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+layout(set = 0, binding = 0, std430) readonly buffer InputPixels { uint input_pixels[]; };
+layout(set = 0, binding = 1, std430) writeonly buffer OutputPixels { uint output_pixels[]; };
+layout(push_constant) uniform Params {
+    int width;
+    int height;
+    int mode;
+    int tile;
+    float gaze_x;
+    float gaze_y;
+    float fovea_deg;
+    float middle_deg;
+} p;
+
+// Pinhole projection: normalized image location -> view-space ray.
+vec3 ray(vec2 uv) {
+    // 90 degree horizontal/vertical field of view is a declared workload value.
+    return normalize(vec3(2.0 * uv.x - 1.0, 1.0 - 2.0 * uv.y, 1.0));
+}
+
+void main() {
+    ivec2 xy = ivec2(gl_GlobalInvocationID.xy);
+    if (xy.x >= p.width || xy.y >= p.height) return;
+    uint index = uint(xy.y * p.width + xy.x);
+    if (p.mode == 0) {
+        output_pixels[index] = input_pixels[index];
+        return;
+    }
+    vec2 gaze = (p.mode == 1) ? vec2(0.5) : vec2(p.gaze_x, p.gaze_y);
+    ivec2 origin = (xy / p.tile) * p.tile;
+    ivec2 end_tile = min(origin + ivec2(p.tile), ivec2(p.width, p.height));
+    ivec2 center = (origin + end_tile - ivec2(1)) / 2;
+    vec2 center_uv = (vec2(center) + 0.5) / vec2(p.width, p.height);
+    float angle = degrees(acos(clamp(dot(ray(center_uv), ray(gaze)), -1.0, 1.0)));
+    int footprint = (angle <= p.fovea_deg) ? 1 : ((angle <= p.middle_deg) ? 2 : 4);
+    ivec2 block = origin + ((xy - origin) / footprint) * footprint;
+    ivec2 source = min(block + ivec2(footprint / 2), end_tile - ivec2(1));
+    output_pixels[index] = input_pixels[uint(source.y * p.width + source.x)];
+}
