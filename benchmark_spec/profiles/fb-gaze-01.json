@@ -1,0 +1,91 @@
+{
+  "spec_version": "FB-GAZE-01/1.0",
+  "frame_hz": 90,
+  "hfov_deg": 90,
+  "vfov_deg": 90,
+  "max_stale_ms": 160,
+  "horizon_cap_ms": 80,
+  "radius_threshold_deg": 5.0,
+  "algorithms": [
+    "hold",
+    "velocity"
+  ],
+  "synthetic_frames": 240,
+  "synthetic_sessions_per_kind": 4,
+  "conditions": [
+    {
+      "id": "clean",
+      "latency_ms": 0,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 0,
+      "dropout_probability": 0
+    },
+    {
+      "id": "latency-20",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 0,
+      "dropout_probability": 0
+    },
+    {
+      "id": "latency-60",
+      "latency_ms": 60,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 0,
+      "dropout_probability": 0
+    },
+    {
+      "id": "jitter-10",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 10,
+      "noise_sigma_deg": 0,
+      "dropout_probability": 0
+    },
+    {
+      "id": "noise-0p5",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 0.5,
+      "dropout_probability": 0
+    },
+    {
+      "id": "noise-2",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 2,
+      "dropout_probability": 0
+    },
+    {
+      "id": "dropout-10",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 0,
+      "dropout_probability": 0.1
+    },
+    {
+      "id": "dropout-30",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 0,
+      "noise_sigma_deg": 0,
+      "dropout_probability": 0.3
+    },
+    {
+      "id": "combined-moderate",
+      "latency_ms": 20,
+      "jitter_sigma_ms": 5,
+      "noise_sigma_deg": 0.5,
+      "dropout_probability": 0.1
+    },
+    {
+      "id": "combined-severe",
+      "latency_ms": 60,
+      "jitter_sigma_ms": 20,
+      "noise_sigma_deg": 2,
+      "dropout_probability": 0.3
+    }
+  ],
+  "quality_gate": {
+    "min_availability": 0.95,
+    "max_miss_rate_5deg": 0.05
+  }
+}
