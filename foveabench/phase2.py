@@ -172,7 +172,8 @@ def analyze(run_dir: Path):
     return out
 
 def run_native(repo: Path, output: Path, trace: Path, *, frames:int=24,
-               width:int=128,height:int=72,require_hardware:bool=False,build_dir:Path|None=None):
+               width:int=128,height:int=72,require_hardware:bool=False,build_dir:Path|None=None,
+               capture_every:int=0):
     non_overwrite(output)
     if not trace.exists():raise FileNotFoundError(trace)
     native=repo/"native"/"vulkan_compute"
@@ -185,6 +186,8 @@ def run_native(repo: Path, output: Path, trace: Path, *, frames:int=24,
     # Native binary creates output after validation. Store the exact trace it consumed.
     cmd=[str(binary),"--shader",str(shader),"--trace",str(trace),
          "--output",str(output),"--frames",str(frames),"--width",str(width),"--height",str(height)]
+    if capture_every<0:raise ValueError("capture_every must be >=0")
+    if capture_every:cmd.extend(["--capture-every",str(capture_every)])
     if require_hardware:cmd.append("--require-hardware")
     subprocess.run(cmd,check=True)
     shutil.copyfile(trace,output/"trace.csv")
@@ -208,6 +211,7 @@ def cli():
     c.add_argument("--width",type=int,default=128)
     c.add_argument("--height",type=int,default=72)
     c.add_argument("--require-hardware",action="store_true")
+    c.add_argument("--capture-every",type=int,default=0,help="0 captures legacy sparse scientific frames; N captures each Nth frame")
     d=sub.add_parser("analyze",help="Rebuild summaries from existing native evidence")
     d.add_argument("--output",type=Path,required=True)
     args=p.parse_args()
@@ -219,7 +223,8 @@ def cli():
     if args.action=="run":
         repo=Path(__file__).resolve().parent.parent
         rows=run_native(repo,args.output,args.trace,frames=args.frames,width=args.width,
-                        height=args.height,require_hardware=args.require_hardware)
+                        height=args.height,require_hardware=args.require_hardware,
+                        capture_every=args.capture_every)
         print(f"FB-RENDER-01: analyzed {len(rows)} policy x scene conditions -> {args.output}")
     if args.action=="analyze":
         print(f"Summarized {len(analyze(args.output))} conditions")

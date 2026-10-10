@@ -30,6 +30,28 @@ Diagnose the first learned controller's velocity weights and evaluate its
 frozen checkpoint on **newly generated pseudonymous IDs** and a new seed.
 See [FB-LEARN-TRANSFER guide](docs/ML_TRANSFER_VALIDATION.md).
 This is limited within-generator robustness, not new human data.
+## Visual GPU-style benchmark (FB-VISUAL-01)
+
+Run actual native Vulkan compute and **watch its recorded frames** in a standalone
+interactive HTML viewer with playback/scrubbing, scene switches, per-frame
+error graphs and synthetic gaze overlays. This is a captured **software Vulkan**
+replay on UTM, NOT real hardware VRS, GPU-speed evidence or live headset output.
+
+    cd ~/research/Foveabench
+    source .venv/bin/activate
+    bash scripts/run_visual_all.sh
+
+The launcher shows the existing neural controller's weights, selects the
+saved trained-pursuit trace if available, and captures and converts real
+native Vulkan frames. Full walkthrough: [Visual viewer](docs/VISUAL_BENCHMARK.md).
+
+## Paper reproduction / human validity
+
+The five-paper target register and replication gates are at
+[Paper reproduction protocol](docs/PAPER_REPLICATION_AND_VALIDITY.md).
+`python -m foveabench.paper_validation registry` prints pending source
+requirements. No claimed human results have been reproduced yet.
+
 ## Phase 3: FB-CAMPAIGN-01 — disjoint experimental campaigns (October 2026)
 
 **Verified in Ubuntu and Ubuntu ARM64 GitHub Actions:** an unattended Phase 1 study generates 57,600 gaze-model records; Phase 3 compares predictor choices with identity-disjoint train/validation/test sets, paired held-out cluster bootstrap intervals, loss/availability accounting and SHA-256 input provenance. It is a **full-information offline policy selector, NOT reinforcement learning**. Only synthetic agents have been tested; empirical/human validity is unproven. 

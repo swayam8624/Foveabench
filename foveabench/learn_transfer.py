@@ -50,10 +50,11 @@ def checkpoint(ml_dir):
     if not np.isfinite(np.concatenate([*map(lambda x:x.ravel(),params),means,scales])).all() or (scales<=0).any():
         raise ValueError("Invalid or nonfinite checkpoint values")
     known=set()
-    for row in csv.DictReader(partition.open(newline="")):
-        if row["subject_id"] in known:
-            raise ValueError("Duplicate subject in training partitions")
-        known.add(row["subject_id"])
+    with partition.open(newline="") as fp:
+        for row in csv.DictReader(fp):
+            if row["subject_id"] in known:
+                raise ValueError("Duplicate subject in training partitions")
+            known.add(row["subject_id"])
     if not known:
         raise ValueError("Missing original identity register")
     return params,means,scales,known,manifest,source
@@ -66,8 +67,8 @@ def inspection(args):
     records=defaultdict(list)
     with p.open(newline="") as f:
         r=csv.DictReader(f)
-        required={"condition","trace_id","velocity_weight","subject_id"}
-        if not required.issubset(r.fieldnames or []):
+        required={"condition","trace_id","subject_id"}
+        if not required.issubset(r.fieldnames or []) or not ({"velocity_weight","blend_weight"} & set(r.fieldnames or [])):
             raise ValueError("Missing learned prediction audit fields")
         for row in tqdm(r,desc="Examining frozen neural actions",unit="frames"):
             weight=float(row["velocity_weight"]) if "velocity_weight" in row else float(row["blend_weight"])

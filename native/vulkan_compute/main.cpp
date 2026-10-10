@@ -30,6 +30,7 @@ namespace fs = std::filesystem;
 struct Settings {
     fs::path shader, trace, output;
     int width = 128, height = 72, max_frames = 16, device_index = -1;
+    int capture_every = 0; // 0: legacy 2-frame scientific snapshots, >0: visual replay
     bool require_hardware = false;
 };
 struct Gaze { uint64_t t; float truth_x, truth_y, used_x, used_y; bool valid; };
@@ -53,7 +54,7 @@ Settings parse(int argc, char** argv) {
         if (arg == "--require-hardware") { s.require_hardware = true; continue; }
         if (arg == "--help") {
             std::cout << "fb_vk_compute --shader <compiled.spv> --trace <trace.csv> --output <dir> "
-                "[--width N --height N --frames N --device-index N --require-hardware]\n";
+                "[--width N --height N --frames N --capture-every N --device-index N --require-hardware]\n";
             std::exit(0);
         }
         if (i+1 >= argc) throw std::runtime_error("Missing value for " + arg);
@@ -64,11 +65,12 @@ Settings parse(int argc, char** argv) {
         else if (arg == "--width") s.width=std::stoi(v);
         else if (arg == "--height") s.height=std::stoi(v);
         else if (arg == "--frames") s.max_frames=std::stoi(v);
+        else if (arg == "--capture-every") s.capture_every=std::stoi(v);
         else if (arg == "--device-index") s.device_index=std::stoi(v);
         else throw std::runtime_error("Unknown option " + arg);
     }
     if (s.shader.empty()||s.trace.empty()||s.output.empty()) throw std::runtime_error("--shader --trace --output are required");
-    if (s.width<32||s.height<32||s.width>4096||s.height>4096||s.max_frames<1||s.max_frames>100000)
+    if (s.width<32||s.height<32||s.width>4096||s.height>4096||s.max_frames<1||s.max_frames>100000||s.capture_every<0||s.capture_every>10000)
         throw std::runtime_error("Invalid size or frames; allowed 32..4096 pixels and 1..100000 frames");
     if (fs::exists(s.output)) throw std::runtime_error("Refusing to overwrite existing results: " + s.output.string());
     return s;
@@ -408,7 +410,8 @@ int main(int argc,char** argv) {
                     if(std::isfinite(gpu))csv<<gpu;
                     csv<<','<<m.mse<<','<<m.weighted<<','<<m.foveal<<','
                        <<double(m.sample_count)/input.size()<<','<<m.mismatch<<'\n';
-                    if(i==0 || i==int(gaze.size())/2)
+                    if((s.capture_every>0 && (i%s.capture_every==0 || i==int(gaze.size())-1)) ||
+                       (s.capture_every==0 && (i==0 || i==int(gaze.size())/2)))
                         write_ppm(s.output/"frames"/(std::string(scene_index==0?"chirp_":"edges_")+
                               modes[size_t(mode)]+"_"+std::to_string(i)+".ppm"),output,s.width,s.height);
                     rows++;aggregate_weighted+=m.weighted;
@@ -446,6 +449,7 @@ int main(int argc,char** argv) {
               "  \"gpu_time_is_full_frame_latency\": false,\n"
               "  \"scene_origin\": \"deterministic procedural diagnostic\",\n"
               "  \"resolution\": ["<<s.width<<","<<s.height<<"],\n"
+              "  \"capture_every\": "<<s.capture_every<<",\n"
               "  \"trace_frames\": "<<gaze.size()<<", \"frame_policy_evaluations\": "<<rows<<",\n"
               "  \"full_reference_pixel_mismatch_max\": "<<max_full_mismatch<<",\n"
               "  \"results_class\": "<<quote(software?"software-vulkan-functional":"native-vulkan-compute-technical")<<",\n"
