@@ -23,6 +23,12 @@ class TraceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assert_gaze([Gaze(0, math.nan, .5)])
 
+    def test_short_smoke_saccade_has_actual_jumps(self):
+        trace = gaze_trace("saccade", 12, 60)
+        self.assertGreater(len({(s.x, s.y) for s in trace}), 1)
+        # The delayed policy must select a different frame around a jump.
+        self.assertNotEqual(gaze_at_delay(trace, 4, 40).x, trace[4].x)
+
     def test_latency_is_past_zero_order_hold(self):
         t = [Gaze(0,.1,.1), Gaze(20_000_000,.2,.2),
              Gaze(40_000_000,.3,.3)]
