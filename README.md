@@ -2,6 +2,18 @@
 
 **Version 0.1: reproducible gaze replay and a CPU image-space foveation reference model.** This is an independent research harness for the Virginia Tech / XR research direction. It is **not** an ILLIXR starter-task solution, a physical XR runtime, an FPGA testbench, or a measured Vulkan/GPU benchmark.
 
+## Phase 1: FB-GAZE-01 (October 2026)
+
+**Autonomous gaze prediction and replay study:** 12 procedural trace streams × 10 sensor conditions × 2 causal predictors × 240 frames = **57,600 frame/predictor/condition evaluations**. No external data, head-mounted display, ILLIXR codebase or Vulkan device needed for this first *scientific scaffold*. The results are **synthetic and geometric only**: not actual GPU measurements, validated human perception or human participants.
+
+```bash
+# From the repository root, Python 3.10+ (no extra dependencies for Phase 1)
+python3 -m foveabench.phase1 run --output results/phase1-first-study --seed 20261010
+# Inspect results/phase1-first-study/{report.md,summary.csv,frames.csv,per_trace.csv,paired.csv,manifest.json,STATUS.md}
+```
+
+Real datasets can be passed only after normalization and with an explicit consent/license/eye-tracker metadata manifest: see [dataset contract](benchmark_spec/datasets/FORMAT.md). See [five-phase research roadmap](docs/PHASES_AND_RESEARCH.md), [full run instructions](docs/PHASE1_EXECUTION.md), and [reference sources](docs/RESEARCH_SOURCES_PHASE1.md). Each run reports geometric quality gates (explicit provisional thresholds), missing predictions, tail angular errors, paired outcomes, and provenance/limitations. This is distinct from the earlier pixel-block CPU demonstration below.
+
 ## Run immediately (Ubuntu 24.04 ARM64 in UTM, or macOS/Linux)
 
 Requires Python 3.10+ with NumPy. In Ubuntu:

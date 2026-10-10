@@ -22,3 +22,12 @@ Date: 2026-10-10. Evidence from GitHub Actions https://github.com/swayam8624/Fov
 **Research publication status:** no empirical research claim or preprint is justified by this scaffold. Do not characterize first synthetic outputs as validated efficiency improvements.
 
 Next: execute smoke under CI and locally, audit artifacts, run ARM64 Ubuntu on UTM, then independently build a real Vulkan backend that records GPU timestamps and checks VRS feature support. Work with Brendan on defining the most defensible live/replay validation study.
+
+## October 10, 2026 — Phase 1 new autonomous study
+
+- **FB-GAZE-01 implementation:** independent no-GPU gaze replay/prediction experiment added at `foveabench/phase1.py`.
+- **Trial locally:** 12 procedural gaze streams, 10 injected conditions, two causal baselines, 57,600 predictions and a complete result archive; 8/8 Phase 1 integrity tests passed.
+- **GitHub Ubuntu CI:** initial phase study passed with full artifact upload. This does not verify execution inside the user's ARM64 UTM guest.
+- **Recorded dataset ingestion:** strict profile and license/consent metadata contract available; no third-party dataset downloaded or run yet.
+- **GPU / ILLIXR / human validity:** still NOT_IMPLEMENTED or NOT_TESTED. Do not promote simulated angular-error scores to human perceptual ratings.
+- **Next gate:** real empirical trace converter and native Vulkan time-instrumented renderer, plus reproduction on ARM64 UTM.

@@ -332,6 +332,8 @@ def generate_rows(traces: dict[str, list[Sample]], config: dict, seed: int, kind
                                   hfov=hfov, vfov=vfov)
             for model in config["algorithms"]:
                 cursor = 0
+                # Only two newest-by-sample-time arrivals are required.
+                # Avoid O(N^2) rescans when replaying multi-hour gaze traces.
                 arrived: list[Observation] = []
                 considered = 0
                 eligible = 0
@@ -340,7 +342,10 @@ def generate_rows(traces: dict[str, list[Sample]], config: dict, seed: int, kind
                 for i, truth in enumerate(samples):
                     target = truth.t_ns
                     while cursor < len(events) and events[cursor].delivered_ns <= target:
-                        arrived.append(events[cursor])
+                        packet = events[cursor]
+                        arrived.append(packet)
+                        arrived.sort(key=lambda o: o.sample_ns)
+                        arrived = arrived[-2:]
                         cursor += 1
                     if any(o.delivered_ns > target for o in arrived):
                         raise AssertionError("Future-delivered observation leaked")
@@ -364,7 +369,7 @@ def generate_rows(traces: dict[str, list[Sample]], config: dict, seed: int, kind
                               "pred_x": None, "pred_y": None,
                               "has_prediction": False, "angular_error_deg": None,
                               "velocity_bin": vclass, "age_ms": None,
-                              "delivered_samples": len(arrived)}
+                              "delivered_samples": cursor}
                     if pred is not None:
                         eligible += 1
                         x, y, age = pred
