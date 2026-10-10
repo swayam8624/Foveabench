@@ -2,6 +2,17 @@
 
 **Version 0.1: reproducible gaze replay and a CPU image-space foveation reference model.** This is an independent research harness for the Virginia Tech / XR research direction. It is **not** an ILLIXR starter-task solution, a physical XR runtime, an FPGA testbench, or a measured Vulkan/GPU benchmark.
 
+## Real supervised ML training: FB-LEARN-01
+
+Train a 9-input neural gate using NumPy, Adam and tqdm, saving actual learned weights
+plus epoch history and subject-disjoint held-out predictions. The study is synthetic
+and is **not RL, a physical GPU benchmark, or a validated human model**.
+
+    python -m pip install -e .
+    python -m foveabench.learn train --phase1-frames results/three-tracks-utm-20261010T152017Z/phase1/frames.csv --output results/ml-first --epochs 80
+    cat results/ml-first/report.md
+
+See [training methodology](docs/ML_TRAINING.md).
 ## Phase 3: FB-CAMPAIGN-01 — disjoint experimental campaigns (October 2026)
 
 **Verified in Ubuntu and Ubuntu ARM64 GitHub Actions:** an unattended Phase 1 study generates 57,600 gaze-model records; Phase 3 compares predictor choices with identity-disjoint train/validation/test sets, paired held-out cluster bootstrap intervals, loss/availability accounting and SHA-256 input provenance. It is a **full-information offline policy selector, NOT reinforcement learning**. Only synthetic agents have been tested; empirical/human validity is unproven. 

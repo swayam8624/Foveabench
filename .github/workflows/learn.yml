@@ -1,0 +1,42 @@
+name: FB-LEARN-01 supervised neural training
+on:
+  push:
+  pull_request:
+jobs:
+  supervised-training:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install neural training dependencies
+        run: python -m pip install -e .
+      - name: Generate causal Phase 1 model data
+        run: python -m foveabench.phase1 run --output results/learn-input --seed 20261010
+      - name: Train and evaluate real NumPy neural net
+        run: |
+          python -m foveabench.learn train --phase1-frames results/learn-input/frames.csv --output results/learn-ci --epochs 30 --patience 12
+          cat results/learn-ci/report.md
+      - name: Audit checkpoint and held-out evidence
+        run: |
+          python - <<'PY'
+          import json,csv,numpy as np,pathlib
+          p=pathlib.Path('results/learn-ci')
+          m=json.loads((p/'manifest.json').read_text())
+          assert m['suite']=='FB-LEARN-01/1.0'
+          assert m['test_pairs']>0 and m['best_epoch']>0
+          assert m['train_identities']>0 and m['test_identities']>0
+          with np.load(p/'model.npz',allow_pickle=False) as f:
+              assert f['w1'].shape==(9,24)
+              assert np.isfinite(f['w1']).all()
+          rows=list(csv.DictReader((p/'test_metrics.csv').open()))
+          assert {'hold','velocity','learned'}=={r['model'] for r in rows if r['movement']=='ALL'}
+          print('ML_TRAINING_PASS',m['best_epoch'],m['heldout_learned_mean_deg'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fb-learn-supervised
+          path: results/learn-ci/
